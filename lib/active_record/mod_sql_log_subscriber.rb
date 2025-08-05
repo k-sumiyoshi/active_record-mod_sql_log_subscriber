@@ -4,13 +4,14 @@ require 'json'
 require 'active_support/configurable'
 require 'active_support/log_subscriber'
 require 'active_record'
-require 'active_record/log_subscriber'
 
 module ActiveRecord
-  class ModSqlLogSubscriber < ::ActiveRecord::LogSubscriber
+  class ModSqlLogSubscriber < ::ActiveSupport::LogSubscriber
     include ActiveSupport::Configurable
 
-    VERSION = "0.2.0"
+    VERSION = '0.2.1'
+
+    IGNORE_PAYLOAD_NAMES = ['SCHEMA', 'TRANSACTION'].freeze
 
     config_accessor :disable, :log_level, :log_format, :target_statements
 
@@ -38,6 +39,10 @@ module ActiveRecord
     end
 
     private
+
+    def type_casted_binds(casted_binds)
+      casted_binds.respond_to?(:call) ? casted_binds.call : casted_binds
+    end
 
     def target_sql_checker
       @target_sql_checker ||= /\A\s*(#{self.target_statements.join('|')})/mi
