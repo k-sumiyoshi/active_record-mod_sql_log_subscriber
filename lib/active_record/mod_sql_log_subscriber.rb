@@ -9,8 +9,6 @@ module ActiveRecord
   class ModSqlLogSubscriber < ::ActiveSupport::LogSubscriber
     include ActiveSupport::Configurable
 
-    VERSION = '0.2.1'
-
     IGNORE_PAYLOAD_NAMES = ['SCHEMA', 'TRANSACTION'].freeze
 
     config_accessor :disable, :log_level, :log_format, :target_statements
